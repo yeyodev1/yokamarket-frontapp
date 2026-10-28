@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { reactive, shallowRef } from 'vue'
+import { onMounted, reactive, shallowRef } from 'vue'
+import { adminService } from '@/services/admin.service'
+import { useToast } from '@/composables/useToast'
 import type { Category, Product } from '@/types'
 
 const props = defineProps<{ product: Product | null; categories: Category[]; saving: boolean }>()
@@ -24,6 +26,40 @@ const form = reactive({
   sortOrder: p?.sortOrder ?? 0,
 })
 const error = shallowRef('')
+const toast = useToast()
+const uploadEnabled = shallowRef(false)
+const uploading = shallowRef<number | null>(null) // -1 = principal, 0..3 = galería
+
+onMounted(async () => {
+  try {
+    uploadEnabled.value = (await adminService.uploadStatus()).enabled
+  } catch {
+    uploadEnabled.value = false
+  }
+})
+
+/** Sube la foto a Cloudinary y deja el enlace en el campo correspondiente. */
+async function pickAndUpload(slot: number) {
+  const input = document.createElement('input')
+  input.type = 'file'
+  input.accept = 'image/jpeg,image/png,image/webp'
+  input.onchange = async () => {
+    const file = input.files?.[0]
+    if (!file) return
+    uploading.value = slot
+    try {
+      const { url } = await adminService.uploadImage(file)
+      if (slot < 0) form.image = url
+      else form.images[slot] = url
+      toast.show('Foto subida', 'ok')
+    } catch (e) {
+      toast.show((e as { message?: string }).message || 'No se pudo subir la foto', 'error')
+    } finally {
+      uploading.value = null
+    }
+  }
+  input.click()
+}
 
 function submit() {
   error.value = ''
@@ -74,14 +110,20 @@ function submit() {
         <label>Foto principal (enlace)</label>
         <div class="pf__photo-row">
           <input v-model="form.image" type="url" placeholder="https://…/foto.jpg" />
+          <button v-if="uploadEnabled" type="button" class="btn btn--ghost btn--sm" :disabled="uploading !== null" @click="pickAndUpload(-1)">
+            <i class="fa-solid" :class="uploading === -1 ? 'fa-spinner fa-spin' : 'fa-upload'" /> Subir
+          </button>
           <img v-if="form.image" :src="form.image" alt="" />
         </div>
-        <span class="field__hint">Pega el enlace directo de la imagen (termina en .jpg o .png). Ideal 4:3 o cuadrada.</span>
+        <span class="field__hint">{{ uploadEnabled ? 'Toca "Subir" y elige la foto desde tu celular o computadora, o pega un enlace.' : 'Pega el enlace directo de la imagen (termina en .jpg o .png).' }}</span>
       </div>
       <div class="field">
         <label>Fotos adicionales (galería)</label>
         <div v-for="(_, i) in form.images" :key="i" class="pf__photo-row">
           <input v-model="form.images[i]" type="url" :placeholder="`Foto ${i + 2}`" />
+          <button v-if="uploadEnabled" type="button" class="btn btn--ghost btn--sm" :disabled="uploading !== null" @click="pickAndUpload(i)">
+            <i class="fa-solid" :class="uploading === i ? 'fa-spinner fa-spin' : 'fa-upload'" /> Subir
+          </button>
           <img v-if="form.images[i]" :src="form.images[i]" alt="" />
         </div>
       </div>
