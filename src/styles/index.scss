@@ -1,0 +1,71 @@
+// Solo tokens, funciones y mixins. NADA que emita CSS (se antepone a cada SFC).
+@use 'sass:map';
+
+// Marca
+$yellow: #f9ba09;
+$yellow-deep: #e0a500;
+$yellow-soft: #fff1b8;
+$yellow-tint: #fff8e1;
+$cream: #faf8f1;
+$cream-deep: #f1ede0;
+$ink: #1b1b1b;
+$ink-soft: #4a4a44;
+$muted: #8a8778;
+$line: #e6e1d2;
+$white: #ffffff;
+$kraft: #a9764a;
+$kraft-soft: #f3e7d8;
+$green: #3f8f5a;
+$green-soft: #e4f3e8;
+$red: #c8453b;
+$red-soft: #fbe5e3;
+
+$font-head: 'Outfit', system-ui, sans-serif;
+$font-body: 'DM Sans', system-ui, sans-serif;
+
+$radius-sm: 10px;
+$radius: 18px;
+$radius-lg: 28px;
+$shadow-sm: 0 1px 2px rgba(27, 27, 27, 0.06), 0 2px 8px rgba(27, 27, 27, 0.04);
+$shadow: 0 6px 24px rgba(27, 27, 27, 0.08);
+$shadow-lg: 0 18px 50px rgba(27, 27, 27, 0.14);
+$ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+$breakpoints: (
+  sm: 560px,
+  md: 820px,
+  lg: 1080px,
+  xl: 1280px,
+);
+
+@mixin from($bp) {
+  @media (min-width: map.get($breakpoints, $bp)) {
+    @content;
+  }
+}
+
+@mixin container($max: 1160px) {
+  width: 100%;
+  max-width: $max;
+  margin-inline: auto;
+  padding-inline: 20px;
+  @include from(md) {
+    padding-inline: 32px;
+  }
+}
+
+// "Grillas" con flexbox: cada tarjeta parte de $basis y crece.
+@mixin flex-cards($basis, $gap: 16px) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $gap;
+  > * {
+    flex: 1 1 $basis;
+    min-width: 0;
+  }
+}
+
+@mixin focus-ring {
+  outline: 3px solid rgba($yellow, 0.55);
+  outline-offset: 2px;
+}
