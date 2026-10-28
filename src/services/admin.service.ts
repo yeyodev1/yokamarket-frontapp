@@ -63,6 +63,18 @@ class AdminService extends APIBase {
     return this.delete<void>(`/admin/categories/${id}`)
   }
 
+  uploadStatus() {
+    return this.get<{ enabled: boolean }>('/admin/uploads/status')
+  }
+  uploadImage(file: File) {
+    const form = new FormData()
+    form.append('file', file)
+    return this.post<{ url: string; publicId: string }>('/admin/uploads', form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 120000,
+    })
+  }
+
   updateSettings(body: Partial<StoreSettings>) {
     return this.patch<StoreSettings>('/admin/settings', body)
   }
