@@ -7,6 +7,8 @@ export const site = {
   sub: 'Bolones y tortillas de verde congelados, jugos verdes y postres cuchareables sin azúcar añadida. Pides hoy, lo recibes en casa.',
   city: 'Guayaquil',
   catalogYear: '2026',
+  // Foto grande del hero (en public/products). Se cambia aquí o reemplazando el archivo.
+  heroPhoto: '/products/hero-1.jpg',
   pointsOfSale: [
     { name: 'Friendly Market · Icon Plaza', place: 'Los Olivos' },
     { name: 'Friendly Market', place: 'Ceibos' },
