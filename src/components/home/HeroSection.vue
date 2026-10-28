@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { copy, site } from '@/config/site'
+
+// Ruta como string (no import) para que Vite no la resuelva en build: la foto
+// vive en public/products y se puede reemplazar sin recompilar.
+const heroPhoto = site.heroPhoto
 </script>
 
 <template>
@@ -19,7 +23,7 @@ import { copy, site } from '@/config/site'
       </div>
       <div class="hero__art" aria-hidden="true">
         <div class="hero__photo">
-          <img src="/products/hero-1.jpg" alt="" width="640" height="800" fetchpriority="high" />
+          <img :src="heroPhoto" alt="" width="640" height="800" fetchpriority="high" />
         </div>
         <div class="hero__disc">
           <img src="/logo-512.png" alt="" width="320" height="320" />
