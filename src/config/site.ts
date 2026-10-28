@@ -8,7 +8,7 @@ export const site = {
   city: 'Guayaquil',
   catalogYear: '2026',
   // Foto grande del hero (en public/products). Se cambia aquí o reemplazando el archivo.
-  heroPhoto: '/products/hero-1.jpg',
+  heroPhoto: 'https://res.cloudinary.com/xp6hinyz/image/upload/f_auto,q_auto,w_1000,c_limit/yokamarket/productos/bolones-1.jpg',
   pointsOfSale: [
     { name: 'Friendly Market · Icon Plaza', place: 'Los Olivos' },
     { name: 'Friendly Market', place: 'Ceibos' },
